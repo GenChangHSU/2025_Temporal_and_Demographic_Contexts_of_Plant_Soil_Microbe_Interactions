@@ -40,8 +40,6 @@ library("grid")
 ########################################################################################################################
 Data <- read_excel("./Data_raw/Tansley_review_dataset.xlsx", sheet = 1)
 
-
-
 ########################################################################################################################
 ########################################################################################################################
 #### Create new data frame with growth form matching 
@@ -197,10 +195,8 @@ Y.Margin.Cat1 <-
   scale_fill_manual(name = "Life history", 
                     values = c("Perennial" = "#009E73", 
                                "Annual" = "#E69F00", 
-                               "Annual-Perennial" = "#56B4E9"),
-                    ) + 
-  scale_x_continuous(expand = c(0.05, 1),
-                     limits = c(0, 20)) +
+                               "Annual-Perennial" = "#56B4E9")) + 
+  scale_x_continuous(expand = c(0.05, 2)) +
   theme_void() + 
   coord_flip() + 
   theme(legend.position = c(0.75, 0.8),
