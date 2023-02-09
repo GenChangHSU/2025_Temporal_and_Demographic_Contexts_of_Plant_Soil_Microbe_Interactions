@@ -434,10 +434,10 @@ plot_sim_one_par <- function(dat, pchange_focal_par, pchange_nonfocal_par){
     theme_classic() + 
     theme(axis.line.x = element_blank(),
           axis.ticks.x = element_blank(),
-          axis.text = element_text(color = "black", size = 12),
-          plot.title = element_text(hjust = 0.5, size = 14),
-          axis.title.x = element_text(size = 13, margin = margin(t = 10)),
-          axis.title.y = element_text(size = 13, margin = margin(r = 8)))
+          axis.text = element_text(color = "black", size = 14),
+          plot.title = element_text(hjust = 0.5, size = 16),
+          axis.title.x = element_text(size = 15, margin = margin(t = 10)),
+          axis.title.y = element_text(size = 15, margin = margin(r = 8)))
 }
 
 ### Visualize the simulation results 
