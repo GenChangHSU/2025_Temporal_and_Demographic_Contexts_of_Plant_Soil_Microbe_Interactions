@@ -2181,10 +2181,10 @@ plot_sim_one_par_relabd <- function(dat, pchange_focal_par, pchange_nonfocal_par
     theme_classic() + 
     theme(axis.line.x = element_blank(),
           axis.ticks.x = element_blank(),
-          axis.text.x = element_text(color = "black", size = 12, angle = 45),
+          axis.text.x = element_text(color = "black", size = 12),
           axis.text.y = element_text(color = "black", size = 14),
           plot.title = element_text(hjust = 0.5, size = 16),
-          axis.title.x = element_text(size = 15, margin = margin(t = -5)),
+          axis.title.x = element_text(size = 15, margin = margin(t = 10)),
           axis.title.y = element_text(size = 15, margin = margin(r = 8)))
 }
 
@@ -2711,10 +2711,10 @@ plot_sim_two_pars_relabd <- function(dat, pchange_focal_par, pchange_nonfocal_pa
     theme_classic() + 
     theme(axis.line.x = element_blank(),
           axis.ticks.x = element_blank(),
-          axis.text.x = element_text(color = "black", size = 12, angle = 45),
+          axis.text.x = element_text(color = "black", size = 12),
           axis.text.y = element_text(color = "black", size = 14),
           plot.title = element_text(hjust = 0.5, size = 16),
-          axis.title.x = element_text(size = 15, margin = margin(t = -5)),
+          axis.title.x = element_text(size = 15, margin = margin(t = 10)),
           axis.title.y = element_text(size = 15, margin = margin(r = 8)))
 }
 
