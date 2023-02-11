@@ -462,6 +462,7 @@ plot_sim_one_par(dat = BH_sens_20_5,
                  pchange_focal_par = 20, 
                  pchange_nonfocal_par = 5)
 ggsave("./Outputs/one_par_sens_plot_20_5.tiff", width = 5, height = 4, dpi = 600, device = "tiff")
+ggsave("./Outputs/one_par_sens_plot_20_5.pdf", width = 5, height = 4)
 
 plot_sim_one_par(dat = BH_sens_40_5,
                  pchange_focal_par = 40, 
@@ -991,6 +992,7 @@ plot_sim_two_pars(dat = BH_sens_20_5,
                   pchange_focal_par = 20, 
                   pchange_nonfocal_par = 5)
 ggsave("./Outputs/two_pars_sens_plot_20_5.tiff", width = 10, height = 5, dpi = 600, device = "tiff")
+ggsave("./Outputs/two_pars_sens_plot_20_5.pdf", width = 9, height = 5.5)
 
 plot_sim_two_pars(dat = BH_sens_40_5,
                   pchange_focal_par = 40, 
@@ -1521,6 +1523,7 @@ plot_sim_three_pars(dat = BH_sens_20_5,
                     pchange_focal_par = 20, 
                     pchange_nonfocal_par = 5)
 ggsave("./Outputs/three_pars_sens_plot_20_5.tiff", width = 10, height = 5, dpi = 600, device = "tiff")
+ggsave("./Outputs/three_pars_sens_plot_20_5.pdf", width = 9, height = 5.5)
 
 plot_sim_three_pars(dat = BH_sens_40_5,
                     pchange_focal_par = 40, 
@@ -1863,6 +1866,7 @@ plot_sim_four_pars(dat = BH_sens_20_5,
                    pchange_focal_par = 20, 
                    pchange_nonfocal_par = 5)
 ggsave("./Outputs/four_pars_sens_plot_20_5.tiff", width = 7, height = 5, dpi = 600, device = "tiff")
+ggsave("./Outputs/four_pars_sens_plot_20_5.pdf", width = 7, height = 5)
 
 plot_sim_four_pars(dat = BH_sens_40_5,
                    pchange_focal_par = 40, 
@@ -2210,6 +2214,7 @@ plot_sim_one_par_relabd(dat = BH_sens_20_5,
                  pchange_focal_par = 20, 
                  pchange_nonfocal_par = 5)
 ggsave("./Outputs/one_par_sens_plot_20_5_relabd.tiff", width = 5, height = 4, dpi = 600, device = "tiff")
+ggsave("./Outputs/one_par_sens_plot_20_5_relabd.pdf", width = 5, height = 4)
 
 plot_sim_one_par_relabd(dat = BH_sens_40_5,
                  pchange_focal_par = 40, 
@@ -2740,6 +2745,7 @@ plot_sim_two_pars_relabd(dat = BH_sens_20_5,
                   pchange_focal_par = 20, 
                   pchange_nonfocal_par = 5)
 ggsave("./Outputs/two_pars_sens_plot_20_5_relabd.tiff", width = 10, height = 5, dpi = 600, device = "tiff")
+ggsave("./Outputs/two_pars_sens_plot_20_5_relabd.pdf", width = 9, height = 5.5)
 
 plot_sim_two_pars_relabd(dat = BH_sens_40_5,
                   pchange_focal_par = 40, 
@@ -3270,6 +3276,7 @@ plot_sim_three_pars_relabd(dat = BH_sens_20_5,
                     pchange_focal_par = 20, 
                     pchange_nonfocal_par = 5)
 ggsave("./Outputs/three_pars_sens_plot_20_5_relabd.tiff", width = 10, height = 5, dpi = 600, device = "tiff")
+ggsave("./Outputs/three_pars_sens_plot_20_5_relabd.pdf", width = 9, height = 5.5)
 
 plot_sim_three_pars_relabd(dat = BH_sens_40_5,
                     pchange_focal_par = 40, 
@@ -3612,6 +3619,7 @@ plot_sim_four_pars_relabd(dat = BH_sens_20_5,
                    pchange_focal_par = 20, 
                    pchange_nonfocal_par = 5)
 ggsave("./Outputs/four_pars_sens_plot_20_5_relabd.tiff", width = 7, height = 5, dpi = 600, device = "tiff")
+ggsave("./Outputs/four_pars_sens_plot_20_5_relabd.pdf", width = 7, height = 5)
 
 plot_sim_four_pars_relabd(dat = BH_sens_40_5,
                    pchange_focal_par = 40, 
