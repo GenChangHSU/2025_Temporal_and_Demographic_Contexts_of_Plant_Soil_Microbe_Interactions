@@ -3884,9 +3884,9 @@ plot_sim_one_par_relabd <- function(dat, pchange_focal_par, pchange_nonfocal_par
   
   x_labels <- c(expression(italic(alpha[21])),
                 expression(italic(alpha[22])),
-                expression(italic(g)),
-                expression(italic(lambda)),
-                expression(italic(s)))
+                expression(italic(g[2])),
+                expression(italic(lambda[2])),
+                expression(italic(s[2])))
   
   ggplot(data = dat$pars_sens_df) + 
     geom_hline(yintercept = dat$N2_equl_default, color = "grey60", linetype = "dashed", size = 1) + 
@@ -3900,7 +3900,7 @@ plot_sim_one_par_relabd <- function(dat, pchange_focal_par, pchange_nonfocal_par
     labs(x = "Focal parameter", y = expression(Relative~abundance~of~N[2]), 
          title = glue::glue("Focal parameter: +{pchange_focal_par}% \n Non-focal parameters: ±{pchange_nonfocal_par}%")) +
     scale_x_discrete(labels = x_labels[pars_order$No]) + 
-    scale_y_continuous(expand = c(0.25, 0)) + 
+    scale_y_continuous(expand = c(0.05, 0), limits = c(0, 0.4)) + 
     theme_classic() + 
     theme(axis.line.x = element_blank(),
           axis.ticks.x = element_blank(),
@@ -3918,7 +3918,7 @@ plot_sim_one_par_relabd(dat = BH_sens_FE_HO,
                         pchange_focal_par = 40, 
                         pchange_nonfocal_par = 5)
 
-ggsave("./Outputs/BH_sens_FE_HO.pdf", width = 5, height = 4)
+ggsave("./Outputs/BH_sens_FE_HO.pdf", width = 5, height = 3.8)
 ggsave("./Outputs/BH_sens_FE_HO.tiff", width = 5, height = 4)
 
 ### Scenario 2. N1 = FE & N2 = AC
