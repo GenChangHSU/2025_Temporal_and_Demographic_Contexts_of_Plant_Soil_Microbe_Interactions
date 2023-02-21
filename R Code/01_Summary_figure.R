@@ -67,9 +67,6 @@ Data.New <-
                                    SameForm_Cat2 %in% c("Forb___Shrub", "Shrub___Forb") ~ "Forb___Shrub"))
 
 
-
-
-  
 ########################################################################################################################
 ########################################################################################################################
 #### Plot conditioning and response length information
@@ -358,4 +355,63 @@ Final.Figure
 dev.off()
 
 
+########################################################################################################################
+########################################################################################################################
+### Data summary
+# 1. Number of studies
+Data$Study %>% 
+  unique() %>% 
+  length()
+
+# 2. Number of experimental pairs
+Data$`Pairwise comparison` %>% 
+  unique() %>% 
+  length()
+
+# 3. Number of studies with annual–perennial pairs
+Data %>% 
+  mutate(formtype = str_c(str_extract(GrowthFormA, pattern = "[A-Za-z]*"),
+                          str_extract(GrowthFormB, pattern = "[A-Za-z]*"),
+                          sep = "-")) %>% 
+  filter(formtype == "Annual-Perennial" | formtype == "Perennial-Annual") %>%
+  .$Study %>% 
+  unique() %>% 
+  length()
+
+# 4. Number of experimental pairs with annual–perennial pairs
+Data %>% 
+  mutate(formtype = str_c(str_extract(GrowthFormA, pattern = "[A-Za-z]*"),
+                          str_extract(GrowthFormB, pattern = "[A-Za-z]*"),
+                          sep = "-")) %>% 
+  filter(formtype == "Annual-Perennial" | formtype == "Perennial-Annual") %>%
+  .$`Pairwise comparison` %>% 
+  unique() %>% 
+  length()
+  
+# 5. Mean conditioning length of studies
+Data %>% 
+  filter(ConditionLength != "Field" & !is.na(ConditionLength)) %>% 
+  select(Study, ConditionLength) %>% 
+  distinct() %>% 
+  .$ConditionLength %>% 
+  as.numeric() %>% 
+  mean()
+
+# 6. Number of studies with field-conditioned soil
+Data %>% 
+  filter(ConditionLength == "Field") %>% 
+  select(Study, ConditionLength) %>% 
+  distinct() %>%
+  .$Study %>% 
+  unique() %>% 
+  length()
+  
+# 7. Mean response length of studies
+Data %>% 
+  filter(ResponseLength != "NA") %>% 
+  select(Study, ResponseLength) %>% 
+  distinct() %>% 
+  .$ResponseLength %>% 
+  as.numeric() %>% 
+  mean()
 
