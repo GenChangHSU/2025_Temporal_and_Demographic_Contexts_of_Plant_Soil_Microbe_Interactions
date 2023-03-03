@@ -275,9 +275,9 @@ plot_sim_one_par_relabd <- function(dat, pchange_focal_par, pchange_nonfocal_par
           plot.title = element_text(hjust = 0.5, size = 16),
           axis.title.x = element_text(size = 15, margin = margin(t = 10)),
           axis.title.y = element_text(size = 15, margin = margin(r = 8))) + 
-    annotate(geom = "text", x = 4.5, y = 0.15, label = "No microbial effects") + 
-    annotate(geom = "text", x = 4.5, y = 0.285, label = "Microbial effects on") + 
-    annotate(geom = "text", x = 4.5, y = 0.255, label = "all~N[2]~parameters", parse = T)
+    annotate(geom = "text", x = 4.5, y = 0.15, label = "no microbial effects") + 
+    annotate(geom = "text", x = 4.5, y = 0.285, label = "all~N[2]~parameters", parse = T, color = "blue") + 
+    annotate(geom = "text", x = 4.5, y = 0.255, label = "affected by microbes", color = "blue")
 }
 
 ### Plot and save the figure 
