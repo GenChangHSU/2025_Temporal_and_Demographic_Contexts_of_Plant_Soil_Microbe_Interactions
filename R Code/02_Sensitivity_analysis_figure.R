@@ -1,0 +1,295 @@
+########################################################################################################################
+#### Sensitivity analysis of the parameters in the Beverton-Holt annual plant model
+#### 2022.03.03 
+########################################################################################################################
+#### Parameter values are obtained from the species pair Festuca microstachys (N1) vs. Hordeum murinum (N2) in Van Dyke et al. (2022)
+
+########################################################################################################################
+### Load the libraries
+library(tidyverse)
+
+### The function for one-parameter sensitivity analysis of B-H annual plant model
+### N1 = FE & N2 = HO
+BH_sensitivity_FE_HO <- function(pchange_focal_par = 40, 
+                                 pchange_nonfocal_par = 5,
+                                 n_generation = 100,
+                                 n_sim = 100){
+  
+  BevertonHolt <- function(frame, parameters){
+    
+    Nsim = parameters$N
+    Gsim = parameters$g
+    Ssim = parameters$s
+    Lsim = parameters$lambda
+    Asim = parameters$A
+    
+    for(t in 2:dim(frame)[1]){
+      x = frame[t-1, 2:(Nsim+1)]
+      frame[t, 2:(Nsim+1)] = (1 - Gsim) * Ssim * x + Gsim * x * (Lsim / (1 + Asim %*% (Gsim * x)))
+    }
+    return(frame)
+  }
+  
+  ### Default parameters
+  N <- 2
+  g <- c(0.752273, 0.666667)
+  s <- c(0.133750, 0.045000)
+  lambda <- c(2129.949613, 736.667018)
+  A <- matrix(c(0.588199, 1.410938,
+                0.109412, 0.948399), N, N, byrow = TRUE)
+  
+  parms <- list(N = N, 
+                g = g, 
+                s = s, 
+                lambda = lambda, 
+                A = A)
+  
+  Time <- n_generation
+  
+  out_mat <- matrix(c(c(0:Time), rep(0, N*(Time+1))), (Time+1), N+1, byrow = F)
+  colnames(out_mat) <- c("Time", paste("N", c(1:N), sep = ""))
+  
+  out_mat[1, 2:(N+1)] <- rep(10, N)
+  out_mat <- BevertonHolt(out_mat, parms)
+  
+  N2_equl_default <- out_mat[Time, N+1]/sum(out_mat[Time, 2:(N+1)])
+  
+  
+  ### All parameters increased
+  g_temp <- c(g[1], g[2]*(1 + pchange_focal_par/100))
+  s_temp <- c(s[1], s[2]*(1 + pchange_focal_par/100))
+  lambda_temp <- c(lambda[1], lambda[2]*(1 + pchange_focal_par/100))
+  A_temp <- matrix(c(A[1, 1], A[1, 2], 
+                     A[2, 1]*(1 + pchange_focal_par/100), 
+                     A[2, 2]*(1 + pchange_focal_par/100)), 
+                   N, N, byrow = TRUE)
+  
+  parms_temp <- list(N = N, 
+                     g = g_temp, 
+                     s = s_temp, 
+                     lambda = lambda_temp, 
+                     A = A_temp)
+  
+  Time <- n_generation
+  
+  out_mat <- matrix(c(c(0:Time), rep(0, N*(Time+1))), (Time+1), N+1, byrow = F)
+  colnames(out_mat) <- c("Time", paste("N", c(1:N), sep = ""))
+  
+  out_mat[1, 2:(N+1)] <- rep(10, N)
+  out_mat <- BevertonHolt(out_mat, parms_temp)
+  
+  N2_equl_all_increase <- out_mat[Time, N+1]/sum(out_mat[Time, 2:(N+1)])
+  
+  
+  ### One parameter changed at once
+  # (1) Sensitivity of g
+  g_sens <- sapply(1:n_sim, function(x){
+    
+    g_temp <- c(g[1], g[2]*(1 + pchange_focal_par/100))
+    s_temp <- c(s[1], s[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    lambda_temp <- c(lambda[1], lambda[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    A_temp <- matrix(c(A[1, 1], A[1, 2], 
+                       A[2, 1]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100), 
+                       A[2, 2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100)), 
+                     N, N, byrow = TRUE)
+    
+    parms_temp <- list(N = N, 
+                       g = g_temp, 
+                       s = s_temp, 
+                       lambda = lambda_temp, 
+                       A = A_temp)
+    
+    Time <- n_generation
+    
+    out_mat <- matrix(c(c(0:Time), rep(0, N*(Time+1))), (Time+1), N+1, byrow = F)
+    colnames(out_mat) <- c("Time", paste("N", c(1:N), sep = ""))
+    
+    out_mat[1, 2:(N+1)] <- rep(10, N)
+    
+    out_mat <- BevertonHolt(out_mat, parms_temp)
+    out_mat[Time, N+1]/sum(out_mat[Time, 2:(N+1)])
+    
+  })
+  
+  # (2) Sensitivity of s
+  s_sens <- sapply(1:n_sim, function(x){
+    
+    g_temp <- c(g[1], g[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    s_temp <- c(s[1], s[2]*(1 + pchange_focal_par/100))
+    lambda_temp <- c(lambda[1], lambda[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    A_temp <- matrix(c(A[1, 1], A[1, 2], 
+                       A[2, 1]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100), 
+                       A[2, 2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100)), 
+                     N, N, byrow = TRUE)
+    
+    parms_temp <- list(N = N, 
+                       g = g_temp, 
+                       s = s_temp, 
+                       lambda = lambda_temp, 
+                       A = A_temp)
+    
+    Time <- n_generation
+    
+    out_mat <- matrix(c(c(0:Time), rep(0, N*(Time+1))), (Time+1), N+1, byrow = F)
+    colnames(out_mat) <- c("Time", paste("N", c(1:N), sep = ""))
+    
+    out_mat[1, 2:(N+1)] <- rep(10, N)
+    
+    out_mat <- BevertonHolt(out_mat, parms_temp)
+    out_mat[Time, N+1]/sum(out_mat[Time, 2:(N+1)])
+    
+  })
+  
+  # (3) Sensitivity of lambda
+  lambda_sens <- sapply(1:n_sim, function(x){
+    
+    g_temp <- c(g[1], g[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    s_temp <- c(s[1], s[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    lambda_temp <- c(lambda[1], lambda[2]*(1 + pchange_focal_par/100))
+    A_temp <- matrix(c(A[1, 1], A[1, 2], 
+                       A[2, 1]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100), 
+                       A[2, 2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100)), 
+                     N, N, byrow = TRUE)
+    
+    parms_temp <- list(N = N, 
+                       g = g_temp, 
+                       s = s_temp, 
+                       lambda = lambda_temp, 
+                       A = A_temp)
+    
+    Time <- n_generation
+    
+    out_mat <- matrix(c(c(0:Time), rep(0, N*(Time+1))), (Time+1), N+1, byrow = F)
+    colnames(out_mat) <- c("Time", paste("N", c(1:N), sep = ""))
+    
+    out_mat[1, 2:(N+1)] <- rep(10, N)
+    
+    out_mat <- BevertonHolt(out_mat, parms_temp)
+    out_mat[Time, N+1]/sum(out_mat[Time, 2:(N+1)])
+    
+  })
+  
+  # (4) Sensitivity of A_21
+  A_21_sens <- sapply(1:n_sim, function(x){
+    
+    g_temp <- c(g[1], g[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    s_temp <- c(s[1], s[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    lambda_temp <- c(lambda[1], lambda[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    A_temp <- matrix(c(A[1, 1], A[1, 2], 
+                       A[2, 1]*(1 + pchange_focal_par/100), 
+                       A[2, 2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100)), 
+                     N, N, byrow = TRUE)
+    
+    parms_temp <- list(N = N, 
+                       g = g_temp, 
+                       s = s_temp, 
+                       lambda = lambda_temp, 
+                       A = A_temp)
+    
+    Time <- n_generation
+    
+    out_mat <- matrix(c(c(0:Time), rep(0, N*(Time+1))), (Time+1), N+1, byrow = F)
+    colnames(out_mat) <- c("Time", paste("N", c(1:N), sep = ""))
+    
+    out_mat[1, 2:(N+1)] <- rep(10, N)
+    
+    out_mat <- BevertonHolt(out_mat, parms_temp)
+    out_mat[Time, N+1]/sum(out_mat[Time, 2:(N+1)])
+    
+  })
+  
+  # (5) Sensitivity of A_22
+  A_22_sens <- sapply(1:n_sim, function(x){
+    
+    g_temp <- c(g[1], g[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    s_temp <- c(s[1], s[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    lambda_temp <- c(lambda[1], lambda[2]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100))
+    A_temp <- matrix(c(A[1, 1], A[1, 2], 
+                       A[2, 1]*(1 + runif(n = 1, min = -pchange_nonfocal_par, max = pchange_nonfocal_par)/100), 
+                       A[2, 2]*(1 + pchange_focal_par/100)), 
+                     N, N, byrow = TRUE)
+    
+    parms_temp <- list(N = N, 
+                       g = g_temp, 
+                       s = s_temp, 
+                       lambda = lambda_temp, 
+                       A = A_temp)
+    
+    Time <- n_generation
+    
+    out_mat <- matrix(c(c(0:Time), rep(0, N*(Time+1))), (Time+1), N+1, byrow = F)
+    colnames(out_mat) <- c("Time", paste("N", c(1:N), sep = ""))
+    
+    out_mat[1, 2:(N+1)] <- rep(10, N)
+    
+    out_mat <- BevertonHolt(out_mat, parms_temp)
+    out_mat[Time, N+1]/sum(out_mat[Time, 2:(N+1)])
+    
+  })
+  
+  # Combine all the simulation results
+  pars_sens_df <- data.frame(parameter = rep(c("g", "s", "lambda", "A_21", "A_22"), each = n_sim), 
+                             N2_eql = c(g_sens, s_sens, lambda_sens, A_21_sens, A_22_sens))
+  
+  return(list(N2_equl_default = N2_equl_default,
+              N2_equl_all_increase = N2_equl_all_increase,
+              pars_sens_df = pars_sens_df))
+}
+
+### The function for visualizing the simulation results
+plot_sim_one_par_relabd <- function(dat, pchange_focal_par, pchange_nonfocal_par){
+  
+  pars_order <- dat$pars_sens_df %>% 
+    group_by(parameter) %>% 
+    summarise(mean = mean(N2_eql)) %>% 
+    mutate(No = 1:5) %>% 
+    arrange(desc(mean))
+  
+  dat$pars_sens_df <- dat$pars_sens_df %>% 
+    mutate(parameter = factor(parameter, level = pars_order$parameter, ordered = T))
+  
+  x_labels <- c(expression(italic(alpha[21])),
+                expression(italic(alpha[22])),
+                expression(italic(g[2])),
+                expression(italic(lambda[2])),
+                expression(italic(s[2])))
+  
+  ggplot(data = dat$pars_sens_df) + 
+    geom_hline(yintercept = dat$N2_equl_default, color = "grey60", linetype = "dashed", size = 1) + 
+    geom_hline(yintercept = dat$N2_equl_all_increase, color = "blue", linetype = "dashed", size = 1) + 
+    geom_point(aes(x = parameter, y = N2_eql), position = position_jitter(width = 0.1), 
+               color = "grey50", alpha = 0.75) + 
+    stat_summary(aes(x = parameter, y = N2_eql), fun.y = mean,
+                 fun.ymin = function(x) mean(x) - sd(x), 
+                 fun.ymax = function(x) mean(x) + sd(x), 
+                 geom = "pointrange", color = "red") + 
+    labs(x = "Focal parameter", y = expression(Relative~abundance~of~N[2]), 
+         title = glue::glue("Focal parameter: +{pchange_focal_par}% \n Non-focal parameters: ±{pchange_nonfocal_par}%")) +
+    scale_x_discrete(labels = x_labels[pars_order$No]) + 
+    scale_y_continuous(expand = c(0.05, 0), limits = c(0, 0.4)) + 
+    theme_classic() + 
+    theme(axis.line.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12),
+          axis.text.y = element_text(color = "black", size = 14),
+          plot.title = element_text(hjust = 0.5, size = 16),
+          axis.title.x = element_text(size = 15, margin = margin(t = 10)),
+          axis.title.y = element_text(size = 15, margin = margin(r = 8))) + 
+    annotate(geom = "text", x = 4.5, y = 0.15, label = "No microbial effects") + 
+    annotate(geom = "text", x = 4.5, y = 0.285, label = "Microbial effects on") + 
+    annotate(geom = "text", x = 4.5, y = 0.255, label = "all~N[2]~parameters", parse = T)
+}
+
+### Plot and save the figure 
+BH_sens_FE_HO <- BH_sensitivity_FE_HO()
+
+plot_sim_one_par_relabd(dat = BH_sens_FE_HO,
+                        pchange_focal_par = 40, 
+                        pchange_nonfocal_par = 5)
+
+ggsave("./Outputs/Sensitivity_figure.pdf", width = 5, height = 3.8)
+
+
+
+
+
