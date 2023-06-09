@@ -82,7 +82,7 @@ Data.ScatterPie.Cat1 <-
     mutate(Freq = round(Count / sum(Count), 3)) %>%
     mutate(NumberExperiment = sum(Count)) %>%
     select(Study, ConditionLength, ResponseLength, SameForm_Cat1, NumberExperiment, Freq) %>%
-    mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "38.5",
+    mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "40",
                                        ConditionLength != "Field" ~ ConditionLength)) %>%
     pivot_wider(names_from = SameForm_Cat1, values_from = Freq, values_fill = 0) %>%
     mutate(ConditionLength = as.numeric(ConditionLength),
@@ -149,7 +149,7 @@ X.Margin.Cat1 <-
   Data.New %>%
   filter(ConditionLength != 48) %>%
   select(ConditionLength, ResponseLength, SameForm_Cat1) %>% 
-  mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "38.5", 
+  mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "40", 
                                      ConditionLength != "Field" ~ ConditionLength)) %>% 
   mutate(across(.cols = 1:2, .fns = as.numeric)) %>% 
   mutate_if(is.character, as.factor) %>% 
@@ -182,7 +182,7 @@ Y.Margin.Cat1 <-
   mutate(SameForm_Cat1 = fct_recode(SameForm_Cat1, "Annual-Perennial" = "Annual/Perennial")) %>% 
   filter(ConditionLength != 48) %>%
   select(ConditionLength, ResponseLength, SameForm_Cat1) %>% 
-  mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "38.5", 
+  mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "40", 
                                      ConditionLength != "Field" ~ ConditionLength)) %>% 
   mutate(across(.cols = 1:2, .fns = as.numeric)) %>% 
   mutate_if(is.character, as.factor) %>% 
@@ -220,6 +220,8 @@ Y.Margin.Cat1 <-
 ########################################################################################################################
 ########################################################################################################################
 #### Create the data without pivot_wider()
+jitter_amt_field <- 1.5
+
 df <-
   Data.New %>%
   filter(ConditionLength != 48) %>%
@@ -228,10 +230,12 @@ df <-
   mutate(Freq = round(Count / sum(Count), 3)) %>%
   mutate(NumberExperiment = sum(Count)) %>%
   select(Study, ConditionLength, ResponseLength, SameForm_Cat1, Count, NumberExperiment) %>%
-  mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "38.5",
+  mutate(ConditionLength = case_when(ConditionLength == "Field" ~ "40",
                                      ConditionLength != "Field" ~ ConditionLength)) %>%
   mutate(ConditionLength = as.numeric(ConditionLength),
-         ResponseLength = as.numeric(ResponseLength))
+         ResponseLength = as.numeric(ResponseLength)) %>% 
+  mutate(ConditionLength = case_when(ConditionLength == 40 ~ jitter(ConditionLength, jitter_amt_field),
+                                     TRUE ~ ConditionLength))
 
 
 #### Draw a pie chart with each row and save information into columns
@@ -315,8 +319,8 @@ ScatterPie.Alternative.Cat1 <-
                          breaks = seq(0, 25, by = 5),
                          labels = as.character(seq(0, 25, by = 5))) +
       scale_x_continuous(name = "Conditioning length (month)",
-                         expand = c(0.05, 1.6), 
-                         breaks = c(seq(0, 30, by = 5), 38.5),
+                         expand = c(0.05, 1.5), 
+                         breaks = c(seq(0, 30, by = 5), 40.5),
                          labels = c(as.character(seq(0, 30, by = 5)), "Field")) +
       theme_classic() +
       theme(legend.position = "none",
@@ -327,7 +331,7 @@ ScatterPie.Alternative.Cat1 <-
 
 #### Create a rectangle grob
 rect <- rectGrob(
-  width = unit(0.225, "in"),
+  width = unit(0.39, "in"),
   height = unit(5.5, "in"),
   gp = gpar(fill = "white", col = "white"))
 
@@ -340,7 +344,7 @@ Final.Figure <-
               heights = c(1, 4))
 
 Final.Figure <- ggdraw(Final.Figure) +
-  draw_grob(rect, x = 0.14, y = -0.04)
+  draw_grob(rect, x = 0.12, y = -0.04)
 
 
 ########################################################################################################################
